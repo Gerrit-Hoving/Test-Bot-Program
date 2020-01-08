@@ -35,12 +35,6 @@ public class OI {
 
     //Assign commands to buttons
     OI() {
-        //Maps elevator controls to buttons 3-6 on main stick
-
-        //Maps arm button controls to buttons 3-6 on second stick
-
-        //Maps arm controls to triggers
-
 
     }
 
