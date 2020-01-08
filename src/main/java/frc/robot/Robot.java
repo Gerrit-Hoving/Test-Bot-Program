@@ -8,14 +8,11 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.DriveModeSet;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -28,13 +25,7 @@ import frc.robot.subsystems.Drivetrain;
 public class Robot extends TimedRobot
 {
     private static final Drivetrain Drivetrain = new Drivetrain();
-    public static Drivetrain drivetrain;
     static OI oi;
-
-    private Command autonomousCommand;
-    private Command driveModeSet;
-    private SendableChooser<Command> chooser = new SendableChooser<>();
-    private SendableChooser<Command> driveChooser = new SendableChooser<>();
 
     /**
      * This function is run when the robot is first started up and is
@@ -47,19 +38,9 @@ public class Robot extends TimedRobot
 
         CameraServer.getInstance().startAutomaticCapture();
 
-        //Allows selection of autonomous mode from SmartDashboard
-        //chooser.addDefault("Default Auto", new BaseAutonomous());
-        //chooser.addObject("Secondary Auto", new AltAutonomous());
-        //SmartDashboard.putData("Auto mode", chooser);
-
-        //Allows selection of drive type for test mode from SmartDashboard
-        driveChooser.addDefault("Tank Drive", new DriveModeSet(0));
-        driveChooser.addObject("Standard Drive", new DriveModeSet(1));
-        driveChooser.addObject("Curvature Drive", new DriveModeSet(2));
-        SmartDashboard.putData("Test Driving Mode", chooser);
-
         //Pushes data from robot to SmartDashboard
         SmartDashboard.putData("PDP Info", new PowerDistributionPanel(1));
+        SmartDashboard.putData("Accelerometer", new BuiltInAccelerometer());
 
     }
 
@@ -87,13 +68,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        autonomousCommand = chooser.getSelected();
 
-        // Schedules the autonomous command
-        if (autonomousCommand != null)
-        {
-            autonomousCommand.start();
-        }
     }
 
     /**
@@ -102,23 +77,13 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic()
     {
-        Scheduler.getInstance().run();
-        Drivetrain.tankDrive();
+
     }
 
     @Override
     public void teleopInit()
     {
 
-
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove it
-
-        if (autonomousCommand != null)
-        {
-            autonomousCommand.cancel();
-        }
     }
 
     /**
@@ -127,22 +92,17 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-        Scheduler.getInstance().run();
-
         //Sets the primary driving mode
         Drivetrain.tankDrive();
+        //Drivetrain.standardDrive();
+        //Drivetrain.curvatureDrive();
     }
 
     /**
      * This function sets up testing mode
      */
     public void testInit() {
-        driveModeSet = chooser.getSelected();
 
-        if (driveModeSet != null)
-        {
-            driveModeSet.start();
-        }
     }
 
     /**
@@ -151,6 +111,6 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic()
     {
-        Scheduler.getInstance().run();
+        Drivetrain.standardDrive();
     }
 }
