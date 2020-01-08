@@ -10,10 +10,11 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,7 +25,17 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot
 {
-    private static final Drivetrain Drivetrain = new Drivetrain();
+    private static Spark right = new Spark(8);
+    private static Spark left = new Spark(9);
+
+    private static DifferentialDrive drive = new DifferentialDrive(right, left);
+
+    public static void tankDrive() { drive.tankDrive(OI.m_stick.getX(), OI.s_stick.getX()); }
+
+    public static void curvatureDrive() { drive.curvatureDrive(OI.m_stick.getX(), OI.m_stick.getZ(), true); }
+
+    public static void standardDrive() { drive.arcadeDrive(OI.m_stick.getX(), OI.m_stick.getY()); }
+
     static OI oi;
 
     /**
@@ -93,9 +104,9 @@ public class Robot extends TimedRobot
     public void teleopPeriodic()
     {
         //Sets the primary driving mode
-        Drivetrain.tankDrive();
-        //Drivetrain.standardDrive();
-        //Drivetrain.curvatureDrive();
+        tankDrive();
+        //standardDrive();
+        //curvatureDrive();
     }
 
     /**
@@ -111,6 +122,6 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic()
     {
-        Drivetrain.standardDrive();
+        standardDrive();
     }
 }
